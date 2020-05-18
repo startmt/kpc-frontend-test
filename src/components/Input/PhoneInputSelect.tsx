@@ -10,15 +10,19 @@ const phoneOption = [
   },
 ];
 type PhoneInputSelectProps = {
-  data?: "+66";
+  phoneCode?: string;
+  phoneNumber?: string;
 };
 
-const PhoneInputSelect: React.FC<PhoneInputSelectProps> = ({ data }) => {
+const PhoneInputSelect: React.FC<PhoneInputSelectProps> = ({
+  phoneCode = "+66",
+  phoneNumber,
+}) => {
   const prefixSelector = (
     <Fragment>
       <Form.Item
         style={{ display: "inline-block" }}
-        initialValue={data || "+66"}
+        initialValue={phoneCode || "+66"}
         name="phonecode"
         noStyle
       >
@@ -37,6 +41,7 @@ const PhoneInputSelect: React.FC<PhoneInputSelectProps> = ({ data }) => {
     <Form.Item
       name="phone"
       label="Phone Number"
+      initialValue={phoneNumber || ""}
       rules={[{ required: true, message: "Please input your phone number!" }]}
     >
       <Input addonBefore={prefixSelector} style={{ width: "100%" }} />

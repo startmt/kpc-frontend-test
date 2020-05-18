@@ -1,9 +1,10 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
 export interface UserState {
   data: UserProps[];
-  editingKey: string;
+  editUser: UserProps | undefined;
+  isEdit: boolean;
 }
 
 export interface UserProps {
@@ -15,51 +16,92 @@ export interface UserProps {
   passport: string;
   phone: string;
   phonecode: string;
-  salary: string;
+  salary: number;
   title: string;
   index: number;
+  citizenId: string;
 }
 
 const initialState: UserState = {
   data: [],
-  editingKey: "",
+  editUser: undefined,
+  isEdit: false,
 };
 
-export const getUserFormStorage = () => {
+const getUserFormStorage = () => {
   const data = JSON.parse(localStorage.getItem("user") || "[]");
-  return data;
+  return data.sort(
+    (prev: UserProps, next: UserProps) => prev.index - next.index
+  );
 };
-export const addUserToStorage = (data: UserProps) => {
+const addUserToStorage = (data: UserProps) => {
   const currentData = getUserFormStorage();
   localStorage.setItem(
     "user",
     JSON.stringify(currentData.concat({ ...data, index: currentData.length }))
   );
 };
+const editUserToStorage = (data: UserProps) => {
+  deleteUserToStorage(data.index);
+  const currentData = getUserFormStorage();
+  localStorage.setItem("user", JSON.stringify(currentData.concat({ ...data })));
+};
+
+const deleteUserToStorage = (index: number) => {
+  const currentData = getUserFormStorage();
+  const data = currentData.filter((user: UserProps) => {
+    return user.index !== index;
+  });
+  localStorage.setItem("user", JSON.stringify(data));
+};
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    update: (state, action) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
-      state.data = action.payload.data;
+    add: (state, action) => {
+      addUserToStorage(action.payload.data);
+      state.data = getUserFormStorage();
     },
     getUser: (state) => {
       const data = JSON.parse(localStorage.getItem("user") || "[]");
       state.data = data;
     },
     editUser: (state, action) => {
-      state.editingKey = action.payload.editingKey;
+      state.isEdit = true;
+      state.editUser = state.data.find(
+        (item) => item.index === action.payload.index
+      );
+    },
+    updateUser: (state, action) => {
+      editUserToStorage(action.payload.data);
+      state.data = getUserFormStorage();
+      state.editUser = undefined;
+      state.isEdit = false;
+    },
+    cancel: (state) => {
+      state.isEdit = false;
+      state.editUser = undefined;
+    },
+    deleteUser: (state, action) => {
+      deleteUserToStorage(action.payload.index);
+      state.isEdit = false;
+      state.editUser = undefined;
+      state.data = getUserFormStorage();
     },
   },
 });
 
-export const { update, getUser } = userSlice.actions;
+export const {
+  add,
+  getUser,
+  editUser,
+  updateUser,
+  cancel,
+  deleteUser,
+} = userSlice.actions;
 
-export const selectUserData = (state: RootState) => state.user;
-
+export const selectUserData = (state: RootState) => state.user.data;
+export const selectUserEdit = (state: RootState) => state.user.editUser;
+export const selectisEdit = (state: RootState) => state.user.isEdit;
 export default userSlice.reducer;

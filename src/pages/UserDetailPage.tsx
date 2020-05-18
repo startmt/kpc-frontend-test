@@ -1,70 +1,62 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Section } from "../components/Section";
 import { Card, Form } from "antd";
 import { UserDetailForm } from "../components/UserDetailForm";
 import { UserDetailTable } from "../components/UserDetailTable";
 import { ColumnProps } from "antd/lib/table";
-import { UserProps } from "../features/user/slice";
+import moment from "moment";
+import {
+  UserProps,
+  editUser,
+  getUser,
+  selectUserData,
+  selectUserEdit,
+  deleteUser,
+  cancel,
+} from "../features/user/slice";
+import { useDispatch, useSelector } from "react-redux";
 
 interface UserDataColumn extends ColumnProps<UserProps> {
   editable?: boolean;
 }
 
-const dataSource = [
-  {
-    title: "Mrs.",
-    firstname: "ชาญศิลป์",
-    gender: "male",
-    lastname: "ทองคำ",
-    birthDate: "2020-05-20T14:07:53.213Z",
-    nationality: "thai",
-    passport: "15",
-    phone: "0647972333",
-    phonecode: "+66",
-    salary: "32000",
-    index: 0,
-  },
-  {
-    title: "Mrs.",
-    firstname: "ชาญศิลป์",
-    lastname: "ทองคำ",
-    birthDate: "2020-05-20T14:07:53.213Z",
-    nationality: "thai",
-    passport: "15",
-    phone: "0647972333",
-    phonecode: "+66",
-    salary: "32000",
-    gender: "male",
-    index: 1,
-  },
-  {
-    title: "Mrs.",
-    firstname: "ชาญศิลป์",
-    lastname: "ทองคำ",
-    birthDate: "2020-05-20T14:07:53.213Z",
-    nationality: "thai",
-    passport: "15",
-    phone: "0647972333",
-    phonecode: "+66",
-    salary: "32000",
-    gender: "male",
-    index: 2,
-  },
-  {
-    title: "Mrs.",
-    firstname: "ชาญศิลป์",
-    lastname: "ทองคำ",
-    birthDate: "2020-05-20T14:07:53.213Z",
-    nationality: "thai",
-    passport: "15",
-    phone: "0647972333",
-    phonecode: "+66",
-    salary: "32000",
-    gender: "male",
-    index: 3,
-  },
-];
+const defaultValues = {
+  firstname: undefined,
+  lastname: undefined,
+  birthDate: undefined,
+  gender: undefined,
+  nationality: undefined,
+  passport: undefined,
+  phone: undefined,
+  phonecode: "+66",
+  salary: undefined,
+  title: "Mr.",
+};
+
 const UserDetailPage: React.FC = () => {
+  const dispatch = useDispatch();
+  const editData = useSelector(selectUserEdit);
+  const [form] = Form.useForm();
+  const userData = useSelector(selectUserData);
+
+  const handleEditForm = (index: number) => {
+    dispatch(editUser({ index: index }));
+    form.setFieldsValue({
+      ...editData,
+      birthDate: moment(editData?.birthDate),
+    });
+  };
+  const handleCancelForm = () => {
+    dispatch(cancel());
+    form.setFieldsValue(defaultValues);
+  };
+  const handleDeleteUser = (index: number) => {
+    dispatch(deleteUser({ index: index }));
+    form.setFieldsValue(defaultValues);
+  };
+  useEffect(() => {
+    dispatch(getUser());
+  }, [dispatch]);
   const columns: UserDataColumn[] = [
     {
       title: "NAME",
@@ -97,7 +89,21 @@ const UserDetailPage: React.FC = () => {
       render: (_: any, record: UserProps) => {
         return (
           <Fragment>
-            <a onClick={() => {}}>Edit</a>
+            <a
+              onClick={() => {
+                handleEditForm(record.index);
+              }}
+            >
+              EDIT
+            </a>
+            /
+            <a
+              onClick={() => {
+                handleDeleteUser(record.index);
+              }}
+            >
+              DELETE
+            </a>
           </Fragment>
         );
       },
@@ -108,12 +114,12 @@ const UserDetailPage: React.FC = () => {
     <div className="container">
       <Section size={2}>
         <Card title="">
-          <UserDetailForm />
+          <UserDetailForm onCancel={handleCancelForm} form={form} />
         </Card>
       </Section>
       <Section size={2}>
         <Card title="">
-          <UserDetailTable columns={columns} dataSource={dataSource} />
+          <UserDetailTable columns={columns} dataSource={userData} />
         </Card>
       </Section>
     </div>

@@ -1,34 +1,68 @@
-import React from "react";
-import { Form, Row, Col, Button, Input, Select, DatePicker, Radio } from "antd";
+import React, { useEffect, Fragment, useState } from "react";
+import {
+  Form,
+  Row,
+  Col,
+  Button,
+  Input,
+  DatePicker,
+  Radio,
+  InputNumber,
+} from "antd";
 import styled from "styled-components";
-import { NationalitySelect, TitleSelect, PhoneInputSelect } from "../Input";
+import {
+  NationalitySelect,
+  TitleSelect,
+  PhoneInputSelect,
+  GenderSelect,
+} from "../Input";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  selectUserData,
-  update,
-  addUserToStorage,
+  add,
+  updateUser,
+  selectUserEdit,
   UserProps,
+  selectisEdit,
 } from "../../features/user/slice";
-
+import moment from "moment";
+import { FormInstance } from "antd/lib/form";
+import { CitizenInput } from "../Input/CitizenInput";
 type UserDetailFormProps = {
-  data?: UserProps;
+  form: FormInstance;
+  onCancel: Function;
 };
-const UserDetailForm: React.FC<UserDetailFormProps> = ({ data }) => {
-  const [form] = Form.useForm();
-  const userData = useSelector(selectUserData);
-  const dispatch = useDispatch();
-  const onFinish = (values: any) => {
-    if (data) {
-    } else {
-      console.log(userData, values);
-      addUserToStorage(values);
+const UserDetailForm: React.FC<UserDetailFormProps> = ({ form, onCancel }) => {
+  const editData = useSelector(selectUserEdit);
+  const isEdit = useSelector(selectisEdit);
+  const handleCitizen = (citizenId: string) => {
+    if (citizenId !== "") {
+      form.setFieldsValue({ citizenId: citizenId });
     }
   };
-  const options = [
-    { label: "male", value: "male" },
-    { label: "female", value: "female" },
-    { label: "unisex", value: "unisex" },
-  ];
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (editData) {
+      form.setFieldsValue({
+        ...editData,
+        birthDate: moment(editData?.birthDate),
+      });
+    }
+  }, [editData]);
+  const onFinish = (values: any) => {
+    if (isEdit) {
+      console.log(values);
+      const data: UserProps = {
+        ...values,
+        index: editData?.index,
+        birthDate: values.birthDate.toString(),
+      };
+      dispatch(updateUser({ data }));
+      form.resetFields();
+    } else {
+      dispatch(add({ data: values }));
+      form.resetFields();
+    }
+  };
   return (
     <Form
       form={form}
@@ -44,7 +78,6 @@ const UserDetailForm: React.FC<UserDetailFormProps> = ({ data }) => {
           <Form.Item
             label="Firstname"
             name="firstname"
-            initialValue={data?.firstname || ""}
             rules={[{ required: true, message: "Firstname is required" }]}
           >
             <Input placeholder="Please input" />
@@ -54,7 +87,6 @@ const UserDetailForm: React.FC<UserDetailFormProps> = ({ data }) => {
           <Form.Item
             name="lastname"
             label="Lastname"
-            initialValue={data?.lastname || ""}
             rules={[{ required: true, message: "Lastname is required" }]}
           >
             <Input placeholder="Please input" />
@@ -66,10 +98,11 @@ const UserDetailForm: React.FC<UserDetailFormProps> = ({ data }) => {
           <Form.Item
             name="birthDate"
             label="Birthday"
+            initialValue={editData?.birthDate || ""}
             rules={[{ required: true, message: "Birthday is required" }]}
             wrapperCol={{ span: 12, offset: 2 }}
           >
-            <BirthDayWrapper />
+            <DatePicker allowClear />
           </Form.Item>
         </Col>
         <Col span={14}>
@@ -78,12 +111,20 @@ const UserDetailForm: React.FC<UserDetailFormProps> = ({ data }) => {
       </Row>
       <Row gutter={16}>
         <Col span={12}>
+          <GenderSelect />
+        </Col>
+      </Row>
+      <Row gutter={16}>
+        <Col span={24}>
           <Form.Item
-            name="gender"
-            label="Gender"
-            rules={[{ required: true, message: "Gender is required" }]}
+            name="citizenId"
+            label="CitizenId"
+            rules={[{ required: true, message: "CitizenId is required" }]}
           >
-            <GenderRadioGroup size="large" options={options} />
+            <CitizenInput
+              onChange={handleCitizen}
+              defaultValue={editData?.citizenId}
+            />
           </Form.Item>
         </Col>
       </Row>
@@ -108,30 +149,30 @@ const UserDetailForm: React.FC<UserDetailFormProps> = ({ data }) => {
           <Form.Item
             label="Expected Salary"
             name="salary"
-            rules={[{ required: true, message: "Salary is required" }]}
+            rules={[{ required: true, message: "Salary No is required" }]}
           >
-            <Input suffix="Baht" />
+            <Input min={0} type="number" />
           </Form.Item>
         </Col>
       </Row>
       <Row gutter={16} justify="end">
         <Col>
-          <Button htmlType="submit" color="primary" type="primary">
-            Submit
-          </Button>
+          {isEdit && (
+            <ButtonWrapper onClick={onCancel} type="default">
+              Cancel
+            </ButtonWrapper>
+          )}
+          <ButtonWrapper htmlType="submit" color="primary" type="primary">
+            {isEdit ? <Fragment>Save</Fragment> : <Fragment>Submit</Fragment>}
+          </ButtonWrapper>
         </Col>
       </Row>
     </Form>
   );
 };
 
-const BirthDayWrapper = styled(DatePicker)`
-  align-items: center !important;
-`;
 export default UserDetailForm;
 
-const GenderRadioGroup = styled(Radio.Group)`
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
+const ButtonWrapper = styled(Button)`
+  margin-right: 10px;
 `;
