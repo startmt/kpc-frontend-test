@@ -34,9 +34,10 @@ const getUserFormStorage = () => {
 };
 const addUserToStorage = (data: UserProps) => {
   const currentData = getUserFormStorage();
+  const keys = currentData.map((item: UserProps) => item.key);
   localStorage.setItem(
     "user",
-    JSON.stringify(currentData.concat({ ...data, key: currentData.length }))
+    JSON.stringify(currentData.concat({ ...data, key: Math.max(...keys) + 1 }))
   );
 };
 const editUserToStorage = (data: UserProps) => {

@@ -34,7 +34,6 @@ const UserDetailForm: React.FC<UserDetailFormProps> = ({ form, onCancel }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     if (editData) {
-      console.log("Edit", editData);
       form.setFieldsValue({
         ...editData,
         birthDate: moment(editData?.birthDate),
@@ -43,7 +42,6 @@ const UserDetailForm: React.FC<UserDetailFormProps> = ({ form, onCancel }) => {
   }, [editData]);
   const onFinish = (values: any) => {
     if (isEdit) {
-      console.log("Create", values);
       const data: UserProps = {
         ...values,
         key: editData?.key,
@@ -52,6 +50,7 @@ const UserDetailForm: React.FC<UserDetailFormProps> = ({ form, onCancel }) => {
       dispatch(updateUser({ data }));
       form.resetFields();
     } else {
+      console.log("Create", values);
       dispatch(add({ data: values }));
       form.resetFields();
     }

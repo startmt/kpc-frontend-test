@@ -115,12 +115,12 @@ const UserDetailPage: React.FC = () => {
   return (
     <div className="container">
       <Section size={2}>
-        <Card title="">
+        <Card>
           <UserDetailForm onCancel={handleCancelForm} form={form} />
         </Card>
       </Section>
       <Section size={2}>
-        <Card title="">
+        <Card>
           <UserDetailTable columns={columns} dataSource={userData} />
         </Card>
       </Section>
