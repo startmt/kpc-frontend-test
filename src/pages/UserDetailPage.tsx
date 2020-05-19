@@ -91,7 +91,7 @@ const UserDetailPage: React.FC = () => {
           <Fragment>
             <a
               onClick={() => {
-                handleEditForm(record.index);
+                handleEditForm(record.key);
               }}
             >
               EDIT
@@ -99,7 +99,7 @@ const UserDetailPage: React.FC = () => {
             /
             <a
               onClick={() => {
-                handleDeleteUser(record.index);
+                handleDeleteUser(record.key);
               }}
             >
               DELETE

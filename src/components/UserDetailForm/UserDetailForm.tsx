@@ -1,14 +1,5 @@
-import React, { useEffect, Fragment, useState } from "react";
-import {
-  Form,
-  Row,
-  Col,
-  Button,
-  Input,
-  DatePicker,
-  Radio,
-  InputNumber,
-} from "antd";
+import React, { useEffect, Fragment } from "react";
+import { Form, Row, Col, Button, Input, DatePicker } from "antd";
 import styled from "styled-components";
 import {
   NationalitySelect,
@@ -53,7 +44,7 @@ const UserDetailForm: React.FC<UserDetailFormProps> = ({ form, onCancel }) => {
       console.log(values);
       const data: UserProps = {
         ...values,
-        index: editData?.index,
+        index: editData?.key,
         birthDate: values.birthDate.toString(),
       };
       dispatch(updateUser({ data }));

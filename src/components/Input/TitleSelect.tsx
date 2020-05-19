@@ -1,6 +1,5 @@
 import React from "react";
 import { Select, Form } from "antd";
-import { FormItemProps } from "antd/lib/form";
 
 type TitleSelectProps = {
   data?: "Mr." | "Mrs.";

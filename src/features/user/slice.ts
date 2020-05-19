@@ -18,7 +18,7 @@ export interface UserProps {
   phonecode: string;
   salary: number;
   title: string;
-  index: number;
+  key: number;
   citizenId: string;
 }
 
@@ -30,27 +30,25 @@ const initialState: UserState = {
 
 const getUserFormStorage = () => {
   const data = JSON.parse(localStorage.getItem("user") || "[]");
-  return data.sort(
-    (prev: UserProps, next: UserProps) => prev.index - next.index
-  );
+  return data.sort((prev: UserProps, next: UserProps) => prev.key - next.key);
 };
 const addUserToStorage = (data: UserProps) => {
   const currentData = getUserFormStorage();
   localStorage.setItem(
     "user",
-    JSON.stringify(currentData.concat({ ...data, index: currentData.length }))
+    JSON.stringify(currentData.concat({ ...data, key: currentData.length }))
   );
 };
 const editUserToStorage = (data: UserProps) => {
-  deleteUserToStorage(data.index);
+  deleteUserToStorage(data.key);
   const currentData = getUserFormStorage();
   localStorage.setItem("user", JSON.stringify(currentData.concat({ ...data })));
 };
 
-const deleteUserToStorage = (index: number) => {
+const deleteUserToStorage = (key: number) => {
   const currentData = getUserFormStorage();
   const data = currentData.filter((user: UserProps) => {
-    return user.index !== index;
+    return user.key !== key;
   });
   localStorage.setItem("user", JSON.stringify(data));
 };
@@ -70,7 +68,7 @@ export const userSlice = createSlice({
     editUser: (state, action) => {
       state.isEdit = true;
       state.editUser = state.data.find(
-        (item) => item.index === action.payload.index
+        (item) => item.key === action.payload.key
       );
     },
     updateUser: (state, action) => {
@@ -84,7 +82,7 @@ export const userSlice = createSlice({
       state.editUser = undefined;
     },
     deleteUser: (state, action) => {
-      deleteUserToStorage(action.payload.index);
+      deleteUserToStorage(action.payload.key);
       state.isEdit = false;
       state.editUser = undefined;
       state.data = getUserFormStorage();
