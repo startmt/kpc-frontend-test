@@ -82,6 +82,7 @@ export const userSlice = createSlice({
       state.editUser = undefined;
     },
     deleteUser: (state, action) => {
+      console.log(action);
       deleteUserToStorage(action.payload.key);
       state.isEdit = false;
       state.editUser = undefined;

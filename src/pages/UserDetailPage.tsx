@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect } from "react";
 import { Section } from "../components/Section";
-import { Card, Form } from "antd";
+import { Card, Form, Button } from "antd";
 import { UserDetailForm } from "../components/UserDetailForm";
 import { UserDetailTable } from "../components/UserDetailTable";
 import { ColumnProps } from "antd/lib/table";
@@ -15,8 +15,9 @@ import {
   cancel,
 } from "../features/user/slice";
 import { useDispatch, useSelector } from "react-redux";
+import { TableRowSelection } from "antd/lib/table/interface";
 
-interface UserDataColumn extends ColumnProps<UserProps> {
+export interface UserDataColumn extends ColumnProps<UserProps> {
   editable?: boolean;
 }
 
@@ -40,7 +41,7 @@ const UserDetailPage: React.FC = () => {
   const userData = useSelector(selectUserData);
 
   const handleEditForm = (index: number) => {
-    dispatch(editUser({ index: index }));
+    dispatch(editUser({ key: index }));
     form.setFieldsValue({
       ...editData,
       birthDate: moment(editData?.birthDate),
@@ -51,9 +52,10 @@ const UserDetailPage: React.FC = () => {
     form.setFieldsValue(defaultValues);
   };
   const handleDeleteUser = (index: number) => {
-    dispatch(deleteUser({ index: index }));
+    dispatch(deleteUser({ key: index }));
     form.setFieldsValue(defaultValues);
   };
+
   useEffect(() => {
     dispatch(getUser());
   }, [dispatch]);

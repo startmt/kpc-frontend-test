@@ -6,6 +6,7 @@ import {
   TitleSelect,
   PhoneInputSelect,
   GenderSelect,
+  BirthDayInput,
 } from "../Input";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -33,6 +34,7 @@ const UserDetailForm: React.FC<UserDetailFormProps> = ({ form, onCancel }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     if (editData) {
+      console.log("Edit", editData);
       form.setFieldsValue({
         ...editData,
         birthDate: moment(editData?.birthDate),
@@ -41,10 +43,10 @@ const UserDetailForm: React.FC<UserDetailFormProps> = ({ form, onCancel }) => {
   }, [editData]);
   const onFinish = (values: any) => {
     if (isEdit) {
-      console.log(values);
+      console.log("Create", values);
       const data: UserProps = {
         ...values,
-        index: editData?.key,
+        key: editData?.key,
         birthDate: values.birthDate.toString(),
       };
       dispatch(updateUser({ data }));
@@ -86,15 +88,7 @@ const UserDetailForm: React.FC<UserDetailFormProps> = ({ form, onCancel }) => {
       </Row>
       <Row gutter={16}>
         <Col span={10}>
-          <Form.Item
-            name="birthDate"
-            label="Birthday"
-            initialValue={editData?.birthDate || ""}
-            rules={[{ required: true, message: "Birthday is required" }]}
-            wrapperCol={{ span: 12, offset: 2 }}
-          >
-            <DatePicker allowClear />
-          </Form.Item>
+          <BirthDayInput />
         </Col>
         <Col span={14}>
           <NationalitySelect />

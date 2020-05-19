@@ -44,7 +44,12 @@ const PhoneInputSelect: React.FC<PhoneInputSelectProps> = ({
       initialValue={phoneNumber || ""}
       rules={[{ required: true, message: "Please input your phone number!" }]}
     >
-      <Input addonBefore={prefixSelector} style={{ width: "100%" }} />
+      <Input
+        addonBefore={prefixSelector}
+        style={{ width: "100%" }}
+        maxLength={9}
+        minLength={9}
+      />
     </Form.Item>
   );
 };
