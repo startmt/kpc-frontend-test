@@ -28,7 +28,6 @@ const defaultValues = {
 const UserDetailPage: React.FC = () => {
   const [form] = Form.useForm();
   const { userData, editData, handleDeleteUser, handleEditForm, handleCancelForm } = useUser()
-
   const _handleEditForm = (index: number) => {
     handleEditForm(index)
     form.setFieldsValue({

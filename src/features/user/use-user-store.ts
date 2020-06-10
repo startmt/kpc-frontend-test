@@ -1,17 +1,21 @@
 import { useDispatch, useSelector } from "react-redux"
-import { deleteUser, getUser, selectUserEdit, selectUserData, add, editUser, cancel, selectisEdit, updateUser } from "./user-slice"
-import { useCallback, useEffect } from "react"
+import { deleteUser, getUser, add, editUser, cancel, updateUser } from "./user-slice"
+import { useCallback, useEffect, useMemo } from "react"
 import { UserProps } from "./model"
+import { selectUserData, selectUserEdit, selectisEdit } from "./user-selector"
 
+//create hook from store
 export const useUser = () => {
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch(getUser());
     }, [dispatch]);
 
-    const userData = useSelector(selectUserData);
-    const editData = useSelector(selectUserEdit);
-    const isEdit = useSelector(selectisEdit);
+    const userData = useSelector(useMemo(selectUserData, [dispatch]));
+    const editData = useSelector(useMemo(selectUserEdit, [dispatch]));
+    const isEdit = useSelector(useMemo(selectisEdit, [dispatch]));
+
+
     const handleAddUser = useCallback((data: UserProps) => {
         dispatch(add({ data }))
     }, [dispatch])
@@ -23,7 +27,6 @@ export const useUser = () => {
     const handleUpdateUser = useCallback((data: UserProps) => {
         dispatch(updateUser({ data }));
     }, [dispatch])
-
 
     const handleCancelForm = useCallback(() => {
         dispatch(cancel())

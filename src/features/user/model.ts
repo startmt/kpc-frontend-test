@@ -12,3 +12,4 @@ export interface UserProps {
     key: number;
     citizenId: string;
 }
+//model
