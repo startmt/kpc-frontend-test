@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
+import { UserProps } from "./model";
 
 export interface UserState {
   data: UserProps[];
@@ -7,20 +8,6 @@ export interface UserState {
   isEdit: boolean;
 }
 
-export interface UserProps {
-  birthDate: any;
-  firstname: string;
-  gender: string;
-  lastname: string;
-  nationality: string;
-  passport: string;
-  phone: string;
-  phonecode: string;
-  salary: number;
-  title: string;
-  key: number;
-  citizenId: string;
-}
 
 const initialState: UserState = {
   data: [],
@@ -83,7 +70,6 @@ export const userSlice = createSlice({
       state.editUser = undefined;
     },
     deleteUser: (state, action) => {
-      console.log(action);
       deleteUserToStorage(action.payload.key);
       state.isEdit = false;
       state.editUser = undefined;

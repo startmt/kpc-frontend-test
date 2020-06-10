@@ -1,21 +1,12 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 import { Section } from "../components/Section";
-import { Card, Form, Button } from "antd";
+import { Card, Form } from "antd";
 import { UserDetailForm } from "../components/UserDetailForm";
 import { UserDetailTable } from "../components/UserDetailTable";
 import { ColumnProps } from "antd/lib/table";
 import moment from "moment";
-import {
-  UserProps,
-  editUser,
-  getUser,
-  selectUserData,
-  selectUserEdit,
-  deleteUser,
-  cancel,
-} from "../features/user/slice";
-import { useDispatch, useSelector } from "react-redux";
-import { TableRowSelection } from "antd/lib/table/interface";
+import { UserProps } from "../features/user/model";
+import { useUser } from "../features/user/use-user-store";
 
 export interface UserDataColumn extends ColumnProps<UserProps> {
   editable?: boolean;
@@ -35,30 +26,24 @@ const defaultValues = {
 };
 
 const UserDetailPage: React.FC = () => {
-  const dispatch = useDispatch();
-  const editData = useSelector(selectUserEdit);
   const [form] = Form.useForm();
-  const userData = useSelector(selectUserData);
+  const { userData, editData, handleDeleteUser, handleEditForm, handleCancelForm } = useUser()
 
-  const handleEditForm = (index: number) => {
-    dispatch(editUser({ key: index }));
+  const _handleEditForm = (index: number) => {
+    handleEditForm(index)
     form.setFieldsValue({
       ...editData,
       birthDate: moment(editData?.birthDate),
     });
   };
-  const handleCancelForm = () => {
-    dispatch(cancel());
+  const _handleCancelForm = () => {
+    handleCancelForm();
     form.setFieldsValue(defaultValues);
   };
-  const handleDeleteUser = (index: number) => {
-    dispatch(deleteUser({ key: index }));
+  const _handleDeleteUser = (index: number) => {
+    handleDeleteUser(index)
     form.setFieldsValue(defaultValues);
   };
-
-  useEffect(() => {
-    dispatch(getUser());
-  }, [dispatch]);
   const columns: UserDataColumn[] = [
     {
       title: "NAME",
@@ -93,7 +78,7 @@ const UserDetailPage: React.FC = () => {
           <Fragment>
             <a
               onClick={() => {
-                handleEditForm(record.key);
+                _handleEditForm(record.key);
               }}
             >
               EDIT
@@ -101,7 +86,7 @@ const UserDetailPage: React.FC = () => {
             /
             <a
               onClick={() => {
-                handleDeleteUser(record.key);
+                _handleDeleteUser(record.key);
               }}
             >
               DELETE
@@ -116,7 +101,7 @@ const UserDetailPage: React.FC = () => {
     <div className="container">
       <Section size={2}>
         <Card>
-          <UserDetailForm onCancel={handleCancelForm} form={form} />
+          <UserDetailForm onCancel={_handleCancelForm} form={form} />
         </Card>
       </Section>
       <Section size={2}>

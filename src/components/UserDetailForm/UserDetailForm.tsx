@@ -1,5 +1,5 @@
 import React, { useEffect, Fragment } from "react";
-import { Form, Row, Col, Button, Input, DatePicker } from "antd";
+import { Form, Row, Col, Button, Input } from "antd";
 import styled from "styled-components";
 import {
   NationalitySelect,
@@ -8,30 +8,22 @@ import {
   GenderSelect,
   BirthDayInput,
 } from "../Input";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  add,
-  updateUser,
-  selectUserEdit,
-  UserProps,
-  selectisEdit,
-} from "../../features/user/slice";
 import moment from "moment";
 import { FormInstance } from "antd/lib/form";
 import { CitizenInput } from "../Input/CitizenInput";
+import { UserProps } from "../../features/user/model";
+import { useUser } from "../../features/user/use-user-store";
 type UserDetailFormProps = {
   form: FormInstance;
   onCancel: Function;
 };
 const UserDetailForm: React.FC<UserDetailFormProps> = ({ form, onCancel }) => {
-  const editData = useSelector(selectUserEdit);
-  const isEdit = useSelector(selectisEdit);
+  const { editData, isEdit, handleUpdateUser, handleAddUser } = useUser()
   const handleCitizen = (citizenId: string) => {
     if (citizenId !== "") {
       form.setFieldsValue({ citizenId: citizenId });
     }
   };
-  const dispatch = useDispatch();
   useEffect(() => {
     if (editData) {
       form.setFieldsValue({
@@ -39,7 +31,7 @@ const UserDetailForm: React.FC<UserDetailFormProps> = ({ form, onCancel }) => {
         birthDate: moment(editData?.birthDate),
       });
     }
-  }, [editData]);
+  }, [editData, form]);
   const onFinish = (values: any) => {
     if (isEdit) {
       const data: UserProps = {
@@ -47,11 +39,10 @@ const UserDetailForm: React.FC<UserDetailFormProps> = ({ form, onCancel }) => {
         key: editData?.key,
         birthDate: values.birthDate.toString(),
       };
-      dispatch(updateUser({ data }));
+      handleUpdateUser(data);
       form.resetFields();
     } else {
-      console.log("Create", values);
-      dispatch(add({ data: values }));
+      handleAddUser(values);
       form.resetFields();
     }
   };
