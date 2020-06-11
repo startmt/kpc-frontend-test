@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserProps } from "./model";
+import { addUserToStorage, getUserFormStorage, editUserToStorage, deleteUserToStorage } from "./helper";
 
 //create type of action
 interface AddUserAction {
@@ -30,32 +31,7 @@ const initialState: UserState = {
   isEdit: false,
 };
 
-//helper function for reducer
-const getUserFormStorage = () => {
-  const data = JSON.parse(localStorage.getItem("user") || "[]");
-  return data.sort((prev: UserProps, next: UserProps) => prev.key - next.key);
-};
-const addUserToStorage = (data: UserProps) => {
-  const currentData = getUserFormStorage();
-  const keys = currentData.map((item: UserProps) => item.key);
-  localStorage.setItem(
-    "user",
-    JSON.stringify(currentData.concat({ ...data, key: Math.max(...keys) + 1 }))
-  );
-};
-const editUserToStorage = (data: UserProps) => {
-  deleteUserToStorage(data.key);
-  const currentData = getUserFormStorage();
-  localStorage.setItem("user", JSON.stringify(currentData.concat({ ...data })));
-};
 
-const deleteUserToStorage = (key: number) => {
-  const currentData = getUserFormStorage();
-  const data = currentData.filter((user: UserProps) => {
-    return user.key !== key;
-  });
-  localStorage.setItem("user", JSON.stringify(data));
-};
 
 //create redux flow (action and reducer)
 export const userSlice = createSlice({
