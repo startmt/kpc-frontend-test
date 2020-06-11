@@ -1,13 +1,13 @@
 import { useDispatch, useSelector } from "react-redux"
 import { deleteUser, getUser, add, editUser, cancel, updateUser } from "./user-slice"
-import { useCallback, useEffect, useMemo } from "react"
+import { useCallback, useMemo, useLayoutEffect } from "react"
 import { UserProps } from "./model"
 import { selectUserData, selectUserEdit, selectisEdit } from "./user-selector"
 
 //create hook from store
 export const useUser = () => {
     const dispatch = useDispatch()
-    useEffect(() => {
+    useLayoutEffect(() => {
         dispatch(getUser());
     }, [dispatch]);
 
