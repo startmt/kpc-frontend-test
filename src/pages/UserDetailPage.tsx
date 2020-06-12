@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useMemo } from "react";
 import { Section } from "../components/Section";
 import { Card, Form } from "antd";
 import { UserDetailForm } from "../components/UserDetailForm";
@@ -43,7 +43,7 @@ const UserDetailPage: React.FC = () => {
     handleDeleteUser(index)
     form.setFieldsValue(defaultValues);
   };
-  const columns: UserDataColumn[] = [
+  const columns: UserDataColumn[] = useMemo(() => [
     {
       title: "NAME",
       dataIndex: "name",
@@ -94,7 +94,7 @@ const UserDetailPage: React.FC = () => {
         );
       },
     },
-  ];
+  ], [userData]);
 
   return (
     <div className="container">
