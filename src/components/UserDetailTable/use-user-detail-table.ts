@@ -29,7 +29,6 @@ export const useUserDetailTable = (dataSource: UserProps[] | undefined) => {
         const data =
             dataSource ||
             [].sort((prev: UserProps, next: UserProps) => prev.key - next.key);
-        console.log(current, data)
         return data.slice((current - 1) * 5, (current - 1) * 5 + 5);
     }, [dataSource, current]);
     return { key, current, rowSelection, handleSelectedDelete, handlePagination, getData }
