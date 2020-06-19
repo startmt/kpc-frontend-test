@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo } from "react";
+import React, { Fragment, useMemo, useEffect } from "react";
 import { Section } from "../components/Section";
 import { Card, Form } from "antd";
 import { UserDetailForm } from "../components/UserDetailForm";
@@ -7,6 +7,8 @@ import { ColumnProps } from "antd/lib/table";
 import moment from "moment";
 import { UserProps } from "../features/user/model";
 import { useUser } from "../features/user/use-user-store";
+import { useDispatch } from "react-redux";
+import { getEmployee } from "../features/exampleAsync/slice";
 
 export interface UserDataColumn extends ColumnProps<UserProps> {
   editable?: boolean;
@@ -27,9 +29,15 @@ const defaultValues = {
 
 const UserDetailPage: React.FC = () => {
   const [form] = Form.useForm();
-  const { userData, editData, handleDeleteUser, handleEditForm, handleCancelForm } = useUser()
+  const {
+    userData,
+    editData,
+    handleDeleteUser,
+    handleEditForm,
+    handleCancelForm,
+  } = useUser();
   const _handleEditForm = (index: number) => {
-    handleEditForm(index)
+    handleEditForm(index);
     form.setFieldsValue({
       ...editData,
       birthDate: moment(editData?.birthDate),
@@ -40,62 +48,68 @@ const UserDetailPage: React.FC = () => {
     form.setFieldsValue(defaultValues);
   };
   const _handleDeleteUser = (index: number) => {
-    handleDeleteUser(index)
+    handleDeleteUser(index);
     form.setFieldsValue(defaultValues);
   };
-  const columns: UserDataColumn[] = useMemo(() => [
-    {
-      title: "NAME",
-      dataIndex: "name",
-      key: "name",
-      render: (value: any, record: UserProps, index: number) => {
-        return <div> {`${record.firstname} ${record.lastname}`}</div>;
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getEmployee());
+  });
+  const columns: UserDataColumn[] = useMemo(
+    () => [
+      {
+        title: "NAME",
+        dataIndex: "name",
+        key: "name",
+        render: (value: any, record: UserProps, index: number) => {
+          return <div> {`${record.firstname} ${record.lastname}`}</div>;
+        },
       },
-    },
-    {
-      title: "GENDER",
-      dataIndex: "gender",
-      key: "gender",
-    },
-    {
-      title: "MOBILE PHONE",
-      key: "phone",
-      render: (value: any, record: UserProps, index: number) => {
-        return <div> {`${record.phonecode} ${record.phone}`}</div>;
+      {
+        title: "GENDER",
+        dataIndex: "gender",
+        key: "gender",
       },
-    },
-    {
-      title: "NATIONALITY",
-      key: "nationality",
-      render: (_: any, record: UserProps, index: number) => {
-        return <div> {record.nationality.toUpperCase()}</div>;
+      {
+        title: "MOBILE PHONE",
+        key: "phone",
+        render: (value: any, record: UserProps, index: number) => {
+          return <div> {`${record.phonecode} ${record.phone}`}</div>;
+        },
       },
-    },
-    {
-      render: (_: any, record: UserProps) => {
-        return (
-          <Fragment>
-            <a
-              onClick={() => {
-                _handleEditForm(record.key);
-              }}
-            >
-              EDIT
-            </a>
-            /
-            <a
-              onClick={() => {
-                _handleDeleteUser(record.key);
-              }}
-            >
-              DELETE
-            </a>
-          </Fragment>
-        );
+      {
+        title: "NATIONALITY",
+        key: "nationality",
+        render: (_: any, record: UserProps, index: number) => {
+          return <div> {record.nationality.toUpperCase()}</div>;
+        },
       },
-    },
-  ], [userData]);
-
+      {
+        render: (_: any, record: UserProps) => {
+          return (
+            <Fragment>
+              <a
+                onClick={() => {
+                  _handleEditForm(record.key);
+                }}
+              >
+                EDIT
+              </a>
+              /
+              <a
+                onClick={() => {
+                  _handleDeleteUser(record.key);
+                }}
+              >
+                DELETE
+              </a>
+            </Fragment>
+          );
+        },
+      },
+    ],
+    []
+  );
   return (
     <div className="container">
       <Section size={2}>

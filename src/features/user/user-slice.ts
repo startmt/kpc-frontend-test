@@ -1,6 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserProps } from "./model";
-import { addUserToStorage, getUserFormStorage, editUserToStorage, deleteUserToStorage } from "./helper";
+import {
+  addUserToStorage,
+  getUserFormStorage,
+  editUserToStorage,
+  deleteUserToStorage,
+} from "./helper";
 
 //create type of action
 interface AddUserAction {
@@ -30,8 +35,6 @@ const initialState: UserState = {
   editUser: undefined,
   isEdit: false,
 };
-
-
 
 //create redux flow (action and reducer)
 export const userSlice = createSlice({

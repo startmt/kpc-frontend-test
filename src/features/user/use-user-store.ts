@@ -4,6 +4,7 @@ import { useCallback, useMemo, useLayoutEffect } from "react"
 import { UserProps } from "./model"
 import { selectUserData, selectUserEdit, selectisEdit } from "./user-selector"
 
+
 //create hook from store
 export const useUser = () => {
     const dispatch = useDispatch()
@@ -11,10 +12,9 @@ export const useUser = () => {
         dispatch(getUser());
     }, [dispatch]);
 
-    const userData = useSelector(useMemo(selectUserData, [dispatch]));
+    const userData = useSelector(useMemo(selectUserData, []));
     const editData = useSelector(useMemo(selectUserEdit, [dispatch]));
     const isEdit = useSelector(useMemo(selectisEdit, [dispatch]));
-
 
     const handleAddUser = useCallback((data: UserProps) => {
         dispatch(add({ data }))

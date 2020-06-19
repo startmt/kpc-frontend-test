@@ -1,11 +1,11 @@
 import React from "react";
-import { Form, Button, DatePicker } from "antd";
+import { Form, DatePicker } from "antd";
 import moment, { Moment } from "moment";
 type BirthDayInputProps = {};
 const BirthDayInput: React.FC<BirthDayInputProps> = () => {
   const disabledDate = (current: Moment) => {
     // Can not select days before today and today
-    return current > moment().endOf("day");
+    return current > moment()
   };
   return (
     <Form.Item
