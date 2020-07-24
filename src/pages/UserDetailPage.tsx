@@ -7,8 +7,6 @@ import { ColumnProps } from "antd/lib/table";
 import moment from "moment";
 import { UserProps } from "../features/user/model";
 import { useUser } from "../features/user/use-user-store";
-import { useDispatch } from "react-redux";
-import { getEmployee } from "../features/exampleAsync/slice";
 
 export interface UserDataColumn extends ColumnProps<UserProps> {
   editable?: boolean;
@@ -51,10 +49,6 @@ const UserDetailPage: React.FC = () => {
     handleDeleteUser(index);
     form.setFieldsValue(defaultValues);
   };
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getEmployee());
-  });
   const columns: UserDataColumn[] = useMemo(
     () => [
       {
