@@ -9,5 +9,5 @@ export const createSelector = createSelectorCreator(
 );
 
 function immutableMemoizeCheck(currentVal: any, previousVal: any) {
-  return isEqual(currentVal, previousVal);
+  return currentVal.equals(previousVal)
 }
